@@ -1,0 +1,16 @@
+# Comment formatting
+ReflowComments: false  # Prevent comment wrapping
+ColumnLimit: 120       # Increased to accommodate longer comment lines
+AlignTrailingComments: true  # Align comments
+SpacesBeforeTrailingComments: 2  # Two spaces before comments
+
+# General formatting
+AlwaysBreakTemplateDeclarations: Yes
+BinPackParameters: true
+IndentWidth: 4
+AccessModifierOffset: -4
+
+# Spacing
+SpacesInAngles: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeInheritanceColon: true
