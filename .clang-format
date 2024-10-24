@@ -1,16 +1,25 @@
-# Comment formatting
-ReflowComments: false  # Prevent comment wrapping
-ColumnLimit: 120       # Increased to accommodate longer comment lines
-AlignTrailingComments: true  # Align comments
-SpacesBeforeTrailingComments: 2  # Two spaces before comments
-
-# General formatting
-AlwaysBreakTemplateDeclarations: Yes
-BinPackParameters: true
-IndentWidth: 4
-AccessModifierOffset: -4
-
-# Spacing
-SpacesInAngles: true
+# Spacing for operators and literals
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
-SpaceBeforeInheritanceColon: true
+SpacesInAngles: true
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpaceAfterLogicalNot: false
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyParentheses: false
+SpacesInContainerLiterals: false
+
+# Special handling for floating point literals
+BitFieldColonSpacing: Both
+SpaceAroundPointerQualifiers: Default
+SpacesInConditionalStatement: false
+
+# Prevent breaking of specific constructs
+BinPackArguments: true
+BinPackParameters: true
+ColumnLimit: 120
+
+# Disable spaces in specific cases
+SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeCaseColon: false

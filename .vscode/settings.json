@@ -14,7 +14,7 @@
         "**/obj": true,
         "**/vendor": true
     },
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "C_Cpp.clang_format_style": "file",
     "C_Cpp.clang_format_path": "C:\\Program Files\\LLVM\\bin\\clang-format.exe",
     "C_Cpp.errorSquiggles": "enabled",
@@ -45,6 +45,10 @@
         "xhash": "cpp",
         "xstring": "cpp",
         "xlocale": "cpp",
-        "stdexcept": "cpp"
+        "stdexcept": "cpp",
+        "iostream": "cpp",
+        "source_location": "cpp",
+        "xutility": "cpp",
+        "ostream": "cpp"
     }
 }
