@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   xmapDemo.h
  * Author: LTSACH
  *
@@ -20,36 +20,44 @@
 // #include "util/FuncLib.h"
 #include "dsaheader.h"
 
-int hashFunc(int &key, int tablesize) { return key % tablesize; }
+int hashFunc(int &key, int tablesize) {
+    return key % tablesize;
+}
 
 void simpleMap() {
     int keys[] = {2, 12, 42, 72, 3, 45, 76, 30};
     int values[] = {35, 67, 100, 23, 68, 68, 72, 45};
 
-    xmap< int, int > map(&hashFunc);
+    xmap<int, int> map(&hashFunc);
     for (int idx = 0; idx < 6; idx++) {
         map.put(keys[idx], values[idx]);
     }
     map.println();
-    DLinkedList< int > list = map.clashes();
+    DLinkedList<int> list = map.clashes();
     list.println();
 }
 
 void hashDemo1() {
     int keys[] = {2, 12, 42, 72, 3, 45, 76, 30};
     int values[] = {35, 67, 100, 23, 68, 68, 72, 45};
-    xmap< int, int > hash(&xmap< int, int >::intKeyHash);
+    xmap<int, int> hash(&xmap<int, int>::intKeyHash);
     for (int idx = 0; idx < 8; idx++) {
         hash.put(keys[idx], values[idx]);
     }
     hash.println();
 }
 
-int hashFunc(int *&item, int size) { return *item % size; }
+int hashFunc(int *&item, int size) {
+    return *item % size;
+}
 
-bool keyEQ(int *&lhs, int *&rhs) { return *lhs == *rhs; }
+bool keyEQ(int *&lhs, int *&rhs) {
+    return *lhs == *rhs;
+}
 
-void deleteKey(int *key) { delete key; }
+void deleteKey(int *key) {
+    delete key;
+}
 
 string key2str(int *&item) {
     stringstream os;
@@ -57,7 +65,9 @@ string key2str(int *&item) {
     return os.str();
 }
 
-bool valueEQ(int *&lhs, int *&rhs) { return *lhs == *rhs; }
+bool valueEQ(int *&lhs, int *&rhs) {
+    return *lhs == *rhs;
+}
 
 string value2str(int *&item) {
     stringstream os;
@@ -69,9 +79,9 @@ void hashDemo2() {
     int keys[] = {2, 12, 42, 72, 3, 45, 76, 30};
     int values[] = {35, 67, 100, 23, 68, 68, 72, 45};
 
-    xmap< int, int * > hashMap(&xmap< int, int * >::intKeyHash, 0.75, &valueEQ, &xmap< int, int * >::freeValue,
-                               0,  //keyEQ
-                               0   //deleteKeys
+    xmap<int, int *> hashMap(&xmap<int, int *>::intKeyHash, 0.75, &valueEQ, &xmap<int, int *>::freeValue,
+                             0, // keyEQ
+                             0  // deleteKeys
     );
     for (int idx = 0; idx < 8; idx++) {
         hashMap.put(keys[idx], new int(values[idx]));
@@ -83,8 +93,8 @@ void hashDemo3() {
     int keys[] = {2, 12, 42, 72, 3, 45, 76, 30};
     int values[] = {35, 67, 100, 23, 68, 68, 72, 45};
 
-    xmap< int *, int * > hashMap(&hashFunc, 0.75, &valueEQ, &xmap< int *, int * >::freeValue, &keyEQ,
-                                 &xmap< int *, int * >::freeKey);
+    xmap<int *, int *> hashMap(&hashFunc, 0.75, &valueEQ, &xmap<int *, int *>::freeValue, &keyEQ,
+                               &xmap<int *, int *>::freeKey);
     for (int idx = 0; idx < 8; idx++) {
         hashMap.put(new int(keys[idx]), new int(values[idx]));
     }
@@ -100,8 +110,8 @@ void hashDemo4() {
     Point *values[] = {new Point(2.3, 4.5), new Point(4.2, 6.7), new Point(5.2, 7.2), new Point(9.1, 1.8),
                        new Point(8.9, 9.1), new Point(8.1, 3.1), new Point(3.3, 5.4), new Point(7.3, 4.2)};
 
-    xmap< int *, Point * > hashMap(&hashFunc, 0.75, &Point::pointEQ, &xmap< int *, Point * >::freeValue, &keyEQ,
-                                   &xmap< int *, Point * >::freeKey);
+    xmap<int *, Point *> hashMap(&hashFunc, 0.75, &Point::pointEQ, &xmap<int *, Point *>::freeValue, &keyEQ,
+                                 &xmap<int *, Point *>::freeKey);
     for (int idx = 0; idx < 8; idx++) {
         hashMap.put(new int(keys[idx]), values[idx]);
     }
@@ -111,33 +121,32 @@ void hashDemo4() {
 void hashDemo5() {
     int keys[] = {2, 12, 42, 72, 3, 45, 76, 30};
     int values[] = {35, 67, 100, 23, 68, 68, 72, 45};
-    xmap< int, int > hash(&xmap< int, int >::intKeyHash);
+    xmap<int, int> hash(&xmap<int, int>::intKeyHash);
     for (int idx = 0; idx < 8; idx++) {
         hash.put(keys[idx], values[idx]);
     }
 
-    DLinkedList< int > keyset = hash.keys();
+    DLinkedList<int> keyset = hash.keys();
     cout << "Keys: " << keyset.toString() << endl;
-    DLinkedList< int > valueset = hash.values();
+    DLinkedList<int> valueset = hash.values();
     cout << "Values: " << valueset.toString() << endl;
 }
 
 void hashDemo6() {
     int count = 10000000;
-    //int count = 100;
+    // int count = 100;
     int *keys = genIntArray(count, 0, 1999999999);
-    xmap< int, int * > hash(&xmap< int, int * >::intKeyHash);
+    xmap<int, int *> hash(&xmap<int, int *>::intKeyHash);
     for (int idx = 0; idx < count; idx++) {
         hash.put(keys[idx], 0);
     }
-    //hash.println();
+    // hash.println();
 
-    DLinkedList< int > clashes = hash.clashes();
+    DLinkedList<int> clashes = hash.clashes();
     int max = -1;
-    for (DLinkedList< int >::Iterator it = clashes.begin(); it != clashes.end(); it++) {
+    for (DLinkedList<int>::Iterator it = clashes.begin(); it != clashes.end(); it++) {
         int item = *it;
-        if (item > max)
-            max = item;
+        if (item > max) max = item;
     }
 
     cout << "table size: " << hash.getCapacity() << endl;
@@ -154,7 +163,7 @@ int stringHash(string &str, int size) {
     return sum % size;
 }
 
-//https://raw.githubusercontent.com/icyrockcom/country-capitals/master/data/country-list.csv
+// https://raw.githubusercontent.com/icyrockcom/country-capitals/master/data/country-list.csv
 
 string countries[] = {"country",
                       "capital",
@@ -906,18 +915,17 @@ string countries[] = {"country",
 int ncountry = 248;
 
 void hashDemo7() {
-    xmap< string, string > map(&stringHash);
+    xmap<string, string> map(&stringHash);
     for (int c = 0; c < ncountry * 3; c += 3) {
         string name = countries[c];
         string capital = countries[c + 1];
         map.put(name, capital);
     }
-    DLinkedList< int > clashes = map.clashes();
+    DLinkedList<int> clashes = map.clashes();
     int max = -1;
-    for (DLinkedList< int >::Iterator it = clashes.begin(); it != clashes.end(); it++) {
+    for (DLinkedList<int>::Iterator it = clashes.begin(); it != clashes.end(); it++) {
         int item = *it;
-        if (item > max)
-            max = item;
+        if (item > max) max = item;
     }
     cout << "table size: " << map.getCapacity() << endl;
     cout << "current count: " << map.size() << endl;
@@ -936,7 +944,7 @@ int countryHash(string &country, int size) {
 }
 
 void countryDemo() {
-    xmap< string, string > map(&countryHash);
+    xmap<string, string> map(&countryHash);
     for (int idx = 0; idx < ncountry * 3; idx += 3) {
         string name = countries[idx];
         string capital = countries[idx + 1];
@@ -944,11 +952,10 @@ void countryDemo() {
     }
     map.println();
 
-    DLinkedList< int > list = map.clashes();
+    DLinkedList<int> list = map.clashes();
     int max = -1;
-    for (DLinkedList< int >::Iterator it = list.begin(); it != list.end(); it++) {
-        if (*it > max)
-            max = *it;
+    for (DLinkedList<int>::Iterator it = list.begin(); it != list.end(); it++) {
+        if (*it > max) max = *it;
     }
     cout << "Size: " << map.size() << endl;
     cout << "MAX COLLISION: " << max << endl;
@@ -956,4 +963,129 @@ void countryDemo() {
     string countryname = "Thailand";
     cout << countryname << " : " << map.get(countryname) << endl;
 }
+
+void newINT_delete(int *value) {
+    delete value;
+}
+
+bool newINT_EQ(int *&a, int *&b) {
+    return *a == *b;
+}
+
+int newINT_keyHash(int *&key, int capacity) {
+    return *key % capacity;
+}
+
+string newINT_toString(int *&key) {
+    return "n_" + to_string(*key);
+}
+
+bool printResult(string output, string expect, string name) {
+    if (expect == output) {
+        cout << "test " + name + " --------------- PASS" << "\n";
+        return true;
+    } else {
+        cout << "test " + name + " --------------- FAIL" << "\n";
+        cout << "\texpect : " << expect << endl;
+        cout << "\toutput : " << output << endl;
+        return false;
+    }
+}
+
+bool hash30() {
+    string name = "hash30";
+    try {
+        //! data ------------------------------------
+        xMap<int *, int *> hash(&newINT_keyHash, 1, &newINT_EQ, xMap<int *, int *>::freeKey, &newINT_EQ,
+                                xMap<int *, int *>::freeValue);
+        // cout << "Starting to declare key" << endl;
+
+        int *key1 = new int(1);
+        int *key11 = new int(11);
+        int *key21 = new int(21);
+        int *key31 = new int(31);
+        int *key41 = new int(41);
+        int *key51 = new int(51);
+        int *key61 = new int(61);
+        int *key2 = new int(2);
+        int *key3 = new int(1);
+
+        // cout << "Starting to declare value" << endl;
+        int *value1 = new int(100);
+        int *value11 = new int(200);
+        int *value21 = new int(300);
+        int *value31 = new int(400);
+        int *value41 = new int(500);
+        int *value51 = new int(600);
+        int *value61 = new int(700);
+        int *value2 = new int(800);
+        int *value3 = new int(900);
+
+        // cout << "Starting to put & value" << endl;
+        hash.put(key1, value1);
+        hash.put(key11, value11);
+        hash.put(key21, value21);
+        hash.put(key31, value31);
+        hash.put(key41, value41);
+        hash.put(key51, value51);
+        hash.put(key61, value61);
+        hash.put(key2, value2);
+        hash.put(key3, value3);
+
+        // cout << "Key put successfully" << endl;
+
+        hash.remove(key61, &newINT_delete);
+        hash.remove(key31, value31, &newINT_delete, &newINT_delete);
+
+        // cout << "Key removed successfully" << endl;
+        xMap<int *, int *> copy = hash;
+        copy.clear();
+
+        //! expect ----------------------------------
+        string expect = "\n\
+==================================================\n\
+capacity:   10\n\
+size:       0\n\
+0   : \n\
+1   : \n\
+2   : \n\
+3   : \n\
+4   : \n\
+5   : \n\
+6   : \n\
+7   : \n\
+8   : \n\
+9   : \n\
+==================================================\n";
+
+        //! output ----------------------------------
+        stringstream output;
+        hash.clear();
+        output << "\n" << hash.toString(&newINT_toString, &newINT_toString);
+
+        //! remove data -----------------------------
+        if (value1) {
+            delete value1;
+            value1 = nullptr; // Đảm bảo không giải phóng lại
+        }
+        if (key3) {
+            delete key3;
+            key3 = nullptr; // Đảm bảo không giải phóng lại
+        }
+        if (value61) {
+            delete value61;
+            value61 = nullptr; // Đảm bảo không giải phóng lại
+        }
+
+        //! result ----------------------------------
+        return printResult(output.str(), expect, name);
+    } catch (const std::exception &e) {
+        cerr << "Exception occurred: " << e.what() << endl;
+        return false;
+    } catch (...) {
+        cerr << "Unknown exception occurred." << endl;
+        return false;
+    }
+}
+
 #endif /* XHASHMAPDEMO_H */

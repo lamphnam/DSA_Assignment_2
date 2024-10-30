@@ -1,8 +1,15 @@
+# Line breaking and template formatting
+AlwaysBreakTemplateDeclarations: Yes
+AllowShortFunctionsOnASingleLine: Empty
+BinPackParameters: true
+BinPackArguments: true
+ColumnLimit: 120
+
 # Spacing for operators and literals
 SpaceAfterCStyleCast: false
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
-SpacesInAngles: true
+SpacesInAngles: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 SpaceAfterLogicalNot: false
@@ -15,11 +22,17 @@ BitFieldColonSpacing: Both
 SpaceAroundPointerQualifiers: Default
 SpacesInConditionalStatement: false
 
-# Prevent breaking of specific constructs
-BinPackArguments: true
-BinPackParameters: true
-ColumnLimit: 120
+# Indentation
+IndentWidth: 4
+AccessModifierOffset: -4
+ContinuationIndentWidth: 4
 
-# Disable spaces in specific cases
-SpaceBeforeRangeBasedForLoopColon: true
-SpaceBeforeCaseColon: false
+# Template specific
+SpaceAfterTemplateKeyword: true
+
+# Control statement formatting
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortBlocksOnASingleLine: Empty
+BreakBeforeBraces: Attach
+MaxEmptyLinesToKeep: 1
+SeparateDefinitionBlocks: Always
