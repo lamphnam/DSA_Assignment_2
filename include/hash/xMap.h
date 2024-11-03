@@ -106,7 +106,7 @@ public:
 
     static int stringKeyHash(string &key, int capacity) { // HashFunction
         long long int sum = 0;
-        for (int idx = 0; idx < key.length(); idx++)
+        for(int idx = 0; idx < key.length(); idx++)
             sum += key[idx];
         return sum % capacity;
     }
@@ -119,9 +119,9 @@ public:
      *      2. Users need xMap to free keys
      */
     static void freeKey(xMap<K, V> *pMap) {
-        for (int idx = 0; idx < pMap->capacity; idx++) {
+        for(int idx = 0; idx < pMap->capacity; idx++) {
             DLinkedList<Entry *> list = pMap->table[idx];
-            for (auto pEntry : list) {
+            for(auto pEntry : list) {
                 delete pEntry->key;
             }
         }
@@ -135,9 +135,9 @@ public:
      *      2. Users need xMap to free values
      */
     static void freeValue(xMap<K, V> *pMap) {
-        for (int idx = 0; idx < pMap->capacity; idx++) {
+        for(int idx = 0; idx < pMap->capacity; idx++) {
             DLinkedList<Entry *> list = pMap->table[idx];
-            for (auto pEntry : list) {
+            for(auto pEntry : list) {
                 delete pEntry->value;
             }
         }
@@ -171,20 +171,16 @@ protected:
      * keyEQ(K& lhs, K& rhs): verify the equality of two keys
      */
     bool keyEQ(K &lhs, K &rhs) {
-        if (keyEqual != 0)
-            return keyEqual(lhs, rhs);
-        else
-            return lhs == rhs;
+        if(keyEqual != 0) return keyEqual(lhs, rhs);
+        else return lhs == rhs;
     }
 
     /*
      *  valueEQ(V& lhs, V& rhs): verify the equality of two values
      */
     bool valueEQ(V &lhs, V &rhs) {
-        if (valueEqual != 0)
-            return valueEqual(lhs, rhs);
-        else
-            return lhs == rhs;
+        if(valueEqual != 0) return valueEqual(lhs, rhs);
+        else return lhs == rhs;
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -244,8 +240,8 @@ xMap<K, V>::xMap(const xMap<K, V> &map) {
     this->table = new DLinkedList<Entry *>[this->capacity];
     this->count = map.count;
 
-    for (int i = 0; i < map.capacity; i++) {
-        for (Entry *entry : map.table[i]) {
+    for(int i = 0; i < map.capacity; i++) {
+        for(Entry *entry : map.table[i]) {
             Entry *newEntry = new Entry(*entry);
             table[i].add(newEntry);
         }
@@ -254,7 +250,7 @@ xMap<K, V>::xMap(const xMap<K, V> &map) {
 
 template <class K, class V>
 xMap<K, V> &xMap<K, V>::operator=(const xMap<K, V> &map) {
-    if (this == &map) {
+    if(this == &map) {
         return *this; // Xử lý tự gán
     }
 
@@ -276,9 +272,9 @@ xMap<K, V> &xMap<K, V>::operator=(const xMap<K, V> &map) {
     this->table = new DLinkedList<Entry *>[this->capacity]; // Cấp phát bảng mới
     this->count = map.count;
 
-    for (int i = 0; i < map.capacity; i++) {
+    for(int i = 0; i < map.capacity; i++) {
         // Sử dụng iterator
-        for (auto it = map.table[i].begin(); it != map.table[i].end(); ++it) {
+        for(auto it = map.table[i].begin(); it != map.table[i].end(); ++it) {
             Entry *newEntry = new Entry(**it); // Sao chép mục
             this->table[i].add(newEntry);      // Giả sử phương thức add được triển khai đúng
         }
@@ -304,8 +300,8 @@ V xMap<K, V>::put(K key, V value) {
     DLinkedList<Entry *> &list = table[index];
 
     // Sử dụng iterator để lặp qua danh sách
-    for (auto it = list.begin(); it != list.end(); ++it) {
-        if (keyEQ((*it)->key, key)) {
+    for(auto it = list.begin(); it != list.end(); ++it) {
+        if(keyEQ((*it)->key, key)) {
             retValue = (*it)->value;
             (*it)->value = value;
             return retValue;
@@ -325,9 +321,9 @@ V &xMap<K, V>::get(K key) {
     int index = hashCode(key, capacity);
     DLinkedList<Entry *> &list = table[index];
 
-    for (auto it = list.begin(); it != list.end(); ++it) {
+    for(auto it = list.begin(); it != list.end(); ++it) {
         // Sử dụng *it để lấy dữ liệu
-        if (keyEQ((*it)->key, key)) {
+        if(keyEQ((*it)->key, key)) {
             return (*it)->value; // Sửa ở đây
         }
     }
@@ -343,11 +339,11 @@ V xMap<K, V>::remove(K key, void (*deleteKeyInMap)(K)) {
     int index = hashCode(key, capacity);
     DLinkedList<Entry *> &list = table[index];
 
-    for (auto it = list.begin(); it != list.end(); ++it) {
+    for(auto it = list.begin(); it != list.end(); ++it) {
         // Sử dụng *it để lấy dữ liệu
-        if (keyEQ((*it)->key, key)) {
+        if(keyEQ((*it)->key, key)) {
             V retValue = (*it)->value; // Sửa ở đây
-            if (deleteKeyInMap) {
+            if(deleteKeyInMap) {
                 deleteKeyInMap((*it)->key);
             }
             list.removeItem((*it), deleteEntry);
@@ -365,13 +361,13 @@ bool xMap<K, V>::remove(K key, V value, void (*deleteKeyInMap)(K), void (*delete
     int index = hashCode(key, capacity);
     DLinkedList<Entry *> &list = table[index];
 
-    for (auto it = list.begin(); it != list.end(); ++it) {
+    for(auto it = list.begin(); it != list.end(); ++it) {
         // Sử dụng *it để lấy dữ liệu
-        if (keyEQ((*it)->key, key) && valueEQ((*it)->value, value)) {
-            if (deleteKeyInMap) {
+        if(keyEQ((*it)->key, key) && valueEQ((*it)->value, value)) {
+            if(deleteKeyInMap) {
                 deleteKeyInMap((*it)->key);
             }
-            if (deleteValueInMap) {
+            if(deleteValueInMap) {
                 deleteValueInMap((*it)->value);
             }
             list.removeItem((*it), nullptr);
@@ -388,9 +384,9 @@ bool xMap<K, V>::containsKey(K key) {
     int index = hashCode(key, capacity);
     DLinkedList<Entry *> &list = table[index];
 
-    for (auto it = list.begin(); it != list.end(); ++it) {
+    for(auto it = list.begin(); it != list.end(); ++it) {
         // Sử dụng *it để lấy dữ liệu
-        if (keyEQ((*it)->key, key)) {
+        if(keyEQ((*it)->key, key)) {
             return true;
         }
     }
@@ -399,12 +395,12 @@ bool xMap<K, V>::containsKey(K key) {
 
 template <class K, class V>
 bool xMap<K, V>::containsValue(V value) {
-    for (int i = 0; i < this->capacity; i++) {
+    for(int i = 0; i < this->capacity; i++) {
         DLinkedList<Entry *> &list = this->table[i];
 
-        for (auto it = list.begin(); it != list.end(); ++it) {
+        for(auto it = list.begin(); it != list.end(); ++it) {
             // Sử dụng *it để lấy dữ liệu
-            if (valueEQ((*it)->value, value)) {
+            if(valueEQ((*it)->value, value)) {
                 return true;
             }
         }
@@ -437,9 +433,9 @@ void xMap<K, V>::clear() {
 template <class K, class V>
 DLinkedList<K> xMap<K, V>::keys() {
     DLinkedList<K> keyList;
-    for (int i = 0; i < this->capacity; i++) {
+    for(int i = 0; i < this->capacity; i++) {
         DLinkedList<Entry *> &list = table[i];
-        for (auto it = list.begin(); it != list.end(); ++it) {
+        for(auto it = list.begin(); it != list.end(); ++it) {
             keyList.add((*it)->key);
         }
     }
@@ -449,9 +445,9 @@ DLinkedList<K> xMap<K, V>::keys() {
 template <class K, class V>
 DLinkedList<V> xMap<K, V>::values() {
     DLinkedList<V> valueList;
-    for (int i = 0; i < this->capacity; i++) {
+    for(int i = 0; i < this->capacity; i++) {
         DLinkedList<Entry *> &list = table[i];
-        for (auto it = list.begin(); it != list.end(); ++it) {
+        for(auto it = list.begin(); it != list.end(); ++it) {
             // Sử dụng *it để lấy dữ liệu
             valueList.add((*it)->value);
         }
@@ -462,10 +458,10 @@ DLinkedList<V> xMap<K, V>::values() {
 template <class K, class V>
 DLinkedList<int> xMap<K, V>::clashes() {
     DLinkedList<int> clashCounts;
-    for (int i = 0; i < this->capacity; i++) {
+    for(int i = 0; i < this->capacity; i++) {
         DLinkedList<Entry *> &list = table[i];
         int count = 0;
-        for (auto it = list.begin(); it != list.end(); ++it) {
+        for(auto it = list.begin(); it != list.end(); ++it) {
             count++;
         }
         clashCounts.add(count);
@@ -480,28 +476,24 @@ string xMap<K, V>::toString(string (*key2str)(K &), string (*value2str)(V &)) {
     os << mark << endl;
     os << setw(12) << left << "capacity: " << capacity << endl;
     os << setw(12) << left << "size: " << count << endl;
-    for (int idx = 0; idx < capacity; idx++) {
+    for(int idx = 0; idx < capacity; idx++) {
         DLinkedList<Entry *> list = table[idx];
 
         os << setw(4) << left << idx << ": ";
         stringstream itemos;
-        for (auto pEntry : list) {
+        for(auto pEntry : list) {
             itemos << " (";
 
-            if (key2str != 0)
-                itemos << key2str(pEntry->key);
-            else
-                itemos << pEntry->key;
+            if(key2str != 0) itemos << key2str(pEntry->key);
+            else itemos << pEntry->key;
             itemos << ",";
-            if (value2str != 0)
-                itemos << value2str(pEntry->value);
-            else
-                itemos << pEntry->value;
+            if(value2str != 0) itemos << value2str(pEntry->value);
+            else itemos << pEntry->value;
 
             itemos << ");";
         }
         string valuestr = itemos.str();
-        if (valuestr.length() > 0) valuestr = valuestr.substr(0, valuestr.length() - 1);
+        if(valuestr.length() > 0) valuestr = valuestr.substr(0, valuestr.length() - 1);
         os << valuestr << endl;
     }
     os << mark << endl;
@@ -522,9 +514,9 @@ string xMap<K, V>::toString(string (*key2str)(K &), string (*value2str)(V &)) {
 template <class K, class V>
 void xMap<K, V>::moveEntries(DLinkedList<Entry *> *oldTable, int oldCapacity, DLinkedList<Entry *> *newTable,
                              int newCapacity) {
-    for (int old_index = 0; old_index < oldCapacity; old_index++) {
+    for(int old_index = 0; old_index < oldCapacity; old_index++) {
         DLinkedList<Entry *> &oldList = oldTable[old_index];
-        for (auto oldEntry : oldList) {
+        for(auto oldEntry : oldList) {
             int new_index = this->hashCode(oldEntry->key, newCapacity);
             DLinkedList<Entry *> &newList = newTable[new_index];
             newList.add(oldEntry);
@@ -545,7 +537,7 @@ void xMap<K, V>::ensureLoadFactor(int current_size) {
     // cout << "ensureLoadFactor: count = " << count << "; maxSize = " <<
     // maxSize
     // << endl;
-    if (current_size > maxSize) {
+    if(current_size > maxSize) {
         int oldCapacity = capacity;
         // int newCapacity = oldCapacity + (oldCapacity >> 1);
         int newCapacity = 1.5 * oldCapacity;
@@ -572,7 +564,7 @@ void xMap<K, V>::rehash(int newCapacity) {
     moveEntries(pOldMap, oldCapacity, this->table, newCapacity);
 
     // remove old data: only remove nodes in list, no entry
-    for (int idx = 0; idx < oldCapacity; idx++) {
+    for(int idx = 0; idx < oldCapacity; idx++) {
         DLinkedList<Entry *> &list = pOldMap[idx];
         list.clear();
     }
@@ -591,13 +583,13 @@ void xMap<K, V>::rehash(int newCapacity) {
 template <class K, class V>
 void xMap<K, V>::removeInternalData() {
     // Remove user's data
-    if (deleteKeys != 0) deleteKeys(this);
-    if (deleteValues != 0) deleteValues(this);
+    if(deleteKeys != 0) deleteKeys(this);
+    if(deleteValues != 0) deleteValues(this);
 
     // Remove all entries in the current map
-    for (int idx = 0; idx < this->capacity; idx++) {
+    for(int idx = 0; idx < this->capacity; idx++) {
         DLinkedList<Entry *> &list = this->table[idx];
-        for (auto pEntry : list)
+        for(auto pEntry : list)
             delete pEntry;
         list.clear();
     }
@@ -631,9 +623,9 @@ void xMap<K, V>::copyMapFrom(const xMap<K, V> &map) {
     // needed
 
     // copy entries
-    for (int idx = 0; idx < map.capacity; idx++) {
+    for(int idx = 0; idx < map.capacity; idx++) {
         DLinkedList<Entry *> &list = map.table[idx];
-        for (auto pEntry : list) {
+        for(auto pEntry : list) {
             this->put(pEntry->key, pEntry->value);
         }
     }

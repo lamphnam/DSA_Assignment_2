@@ -85,7 +85,7 @@ public:
      *  => Destructor will call free via function pointer "deleteUserData"
      */
     static void free(Heap<T> *pHeap) {
-        for (int idx = 0; idx < pHeap->count; idx++)
+        for(int idx = 0; idx < pHeap->count; idx++)
             delete pHeap->elements[idx];
     }
 
@@ -95,15 +95,11 @@ private:
     }
 
     int compare(T &a, T &b) {
-        if (comparator != 0)
-            return comparator(a, b);
+        if(comparator != 0) return comparator(a, b);
         else {
-            if (a < b)
-                return -1;
-            else if (a > b)
-                return 1;
-            else
-                return 0;
+            if(a < b) return -1;
+            else if(a > b) return 1;
+            else return 0;
         }
     }
 
@@ -130,8 +126,8 @@ public:
     public:
         Iterator(Heap<T> *heap = 0, bool begin = 0) {
             this->heap = heap;
-            if (begin && (heap != 0)) cursor = 0;
-            if (!begin && (heap != 0)) cursor = heap->size();
+            if(begin && (heap != 0)) cursor = 0;
+            if(!begin && (heap != 0)) cursor = heap->size();
         }
 
         Iterator &operator=(const Iterator &iterator) {
@@ -189,7 +185,7 @@ Heap<T>::Heap(const Heap<T> &heap) {
     this->capacity = heap.capacity;
     this->count = heap.count;
     this->elements = new T[capacity];
-    for (int i = 0; i < count; i++) {
+    for(int i = 0; i < count; i++) {
         this->elements[i] = heap.elements[i];
     }
     this->comparator = heap.comparator;
@@ -199,7 +195,7 @@ Heap<T>::Heap(const Heap<T> &heap) {
 template <class T>
 Heap<T> &Heap<T>::operator=(const Heap<T> &heap) {
     // Kiểm tra self-assignment
-    if (this == &heap) return *this;
+    if(this == &heap) return *this;
     // Xóa mảng cũ
     delete[] this->elements;
 
@@ -209,7 +205,7 @@ Heap<T> &Heap<T>::operator=(const Heap<T> &heap) {
     this->elements = new T[capacity];
 
     // Sao chép từng phần tử
-    for (int i = 0; i < count; i++) {
+    for(int i = 0; i < count; i++) {
         this->elements[i] = heap.elements[i];
     }
 
@@ -223,7 +219,7 @@ Heap<T> &Heap<T>::operator=(const Heap<T> &heap) {
 template <class T>
 Heap<T>::~Heap() {
     // YOUR CODE IS HERE
-    if (this->deleteUserData) {
+    if(this->deleteUserData) {
         this->deleteUserData(this);
     }
     delete[] this->elements;
@@ -256,7 +252,7 @@ void Heap<T>::push(T item) { // item  = 25
 template <class T>
 T Heap<T>::pop() {
     // YOUR CODE IS HERE
-    if (count == 0) {
+    if(count == 0) {
         throw std::underflow_error("Calling to peek with the empty heap.");
     }
     T item = elements[0];
@@ -266,7 +262,7 @@ T Heap<T>::pop() {
     count--;
 
     // Reheap Down từ root để duy trì tính chất heap
-    if (count > 0) {
+    if(count > 0) {
         reheapDown(0);
     }
 
@@ -287,7 +283,7 @@ T Heap<T>::pop() {
 template <class T>
 const T Heap<T>::peek() {
     // YOUR CODE IS HERE
-    if (count == 0) {
+    if(count == 0) {
         throw std::underflow_error("Calling to peek with the empty heap.");
     }
     return elements[0];
@@ -298,7 +294,7 @@ void Heap<T>::remove(T item, void (*removeItemData)(T)) {
     // YOUR CODE IS HERE
     int foundIdx = getItem(item);
 
-    if (foundIdx == -1) {
+    if(foundIdx == -1) {
         return;
     }
 
@@ -308,11 +304,11 @@ void Heap<T>::remove(T item, void (*removeItemData)(T)) {
 
     count--;
 
-    if (count > 0 && foundIdx < count) {
+    if(count > 0 && foundIdx < count) {
         reheapDown(foundIdx);
     }
 
-    if (removeItemData) {
+    if(removeItemData) {
         removeItemData(removedItem);
     }
 }
@@ -320,8 +316,8 @@ void Heap<T>::remove(T item, void (*removeItemData)(T)) {
 template <class T>
 bool Heap<T>::contains(T item) {
     // YOUR CODE IS HERE
-    for (int i = 0; i < count; i++) {
-        if (item == elements[i]) {
+    for(int i = 0; i < count; i++) {
+        if(item == elements[i]) {
             return true;
         }
     }
@@ -344,10 +340,10 @@ void Heap<T>::heapify(T array[], int size) {
     this->count = size;
 
     // Sao chép các phần tử từ mảng array vào elements
-    for (int i = 0; i < size; ++i) {
+    for(int i = 0; i < size; ++i) {
         this->elements[i] = array[i];
     }
-    for (int i = (size / 2) - 1; i >= 0; --i) {
+    for(int i = (size / 2) - 1; i >= 0; --i) {
         reheapDown(i);
     }
 }
@@ -371,17 +367,17 @@ bool Heap<T>::empty() {
 template <class T>
 string Heap<T>::toString(string (*item2str)(T &)) {
     stringstream os;
-    if (item2str != 0) {
+    if(item2str != 0) {
         os << "[";
-        for (int idx = 0; idx < count - 1; idx++)
+        for(int idx = 0; idx < count - 1; idx++)
             os << item2str(elements[idx]) << ",";
-        if (count > 0) os << item2str(elements[count - 1]);
+        if(count > 0) os << item2str(elements[count - 1]);
         os << "]";
     } else {
         os << "[";
-        for (int idx = 0; idx < count - 1; idx++)
+        for(int idx = 0; idx < count - 1; idx++)
             os << elements[idx] << ",";
-        if (count > 0) os << elements[count - 1];
+        if(count > 0) os << elements[count - 1];
         os << "]";
     }
     return os.str();
@@ -393,7 +389,7 @@ string Heap<T>::toString(string (*item2str)(T &)) {
 
 template <class T>
 void Heap<T>::ensureCapacity(int minCapacity) {
-    if (minCapacity >= capacity) {
+    if(minCapacity >= capacity) {
         // re-allocate
         int old_capacity = capacity;
         capacity = old_capacity + (old_capacity >> 2);
@@ -403,7 +399,7 @@ void Heap<T>::ensureCapacity(int minCapacity) {
             memcpy(new_data, elements, old_capacity * sizeof(T));
             delete[] elements;
             elements = new_data;
-        } catch (std::bad_alloc e) {
+        } catch(std::bad_alloc e) {
             e.what();
         }
     }
@@ -418,12 +414,12 @@ void Heap<T>::swap(int a, int b) {
 
 template <class T>
 void Heap<T>::reheapUp(int position) {
-    if (position <= 0) return;
+    if(position <= 0) return;
 
     int parent = (position - 1) / 2;
 
     // So sánh với parent bằng hàm aLTb
-    if (aLTb(elements[position], elements[parent])) {
+    if(aLTb(elements[position], elements[parent])) {
         // Swap nếu phần tử hiện tại nhỏ hơn parent (với min-heap)
         // hoặc lớn hơn parent (với max-heap, do comparator định nghĩa)
         T temp = elements[position];
@@ -442,18 +438,18 @@ void Heap<T>::reheapDown(int position) {
     int lastPosition = count - 1;
 
     // Nếu không có con trái, dừng
-    if (leftChild > lastPosition) return;
+    if(leftChild > lastPosition) return;
 
     // Tìm vị trí nhỏ nhất (hoặc lớn nhất, tùy vào comparator)
     int smallerChild = leftChild;
 
     // Nếu có con phải và con phải nhỏ hơn con trái
-    if (rightChild <= lastPosition && aLTb(elements[rightChild], elements[leftChild])) {
+    if(rightChild <= lastPosition && aLTb(elements[rightChild], elements[leftChild])) {
         smallerChild = rightChild;
     }
 
     // So sánh với phần tử nhỏ nhất
-    if (aLTb(elements[smallerChild], elements[position])) {
+    if(aLTb(elements[smallerChild], elements[position])) {
         // Swap nếu con nhỏ hơn parent
         T temp = elements[position];
         elements[position] = elements[smallerChild];
@@ -467,8 +463,8 @@ void Heap<T>::reheapDown(int position) {
 template <class T>
 int Heap<T>::getItem(T item) {
 
-    for (int i = 0; i < this->count; ++i) {
-        if (this->elements[i] == item) {
+    for(int i = 0; i < this->count; ++i) {
+        if(this->elements[i] == item) {
             return i;
         }
     }
@@ -477,7 +473,7 @@ int Heap<T>::getItem(T item) {
 
 template <class T>
 void Heap<T>::removeInternalData() {
-    if (this->deleteUserData != 0) deleteUserData(this); // clear users's data if they want
+    if(this->deleteUserData != 0) deleteUserData(this); // clear users's data if they want
     delete[] elements;
 }
 
@@ -490,7 +486,7 @@ void Heap<T>::copyFrom(const Heap<T> &heap) {
     this->deleteUserData = heap.deleteUserData;
 
     // Copy items from heap:
-    for (int idx = 0; idx < heap.size(); idx++) {
+    for(int idx = 0; idx < heap.size(); idx++) {
         this->elements[idx] = heap.elements[idx];
     }
 }

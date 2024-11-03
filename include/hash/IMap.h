@@ -23,29 +23,37 @@ private:
     string desc;
 
 public:
-    KeyNotFound(string desc) { this->desc = desc; }
-    const char *what() const throw() { return desc.c_str(); }
+    KeyNotFound(string desc) {
+        this->desc = desc;
+    }
+
+    const char *what() const throw() {
+        return desc.c_str();
+    }
 };
 
-template < class K, class V >
+template <class K, class V>
 struct Pair {
     K key;
     V value;
+
     Pair(K key, V value) {
         this->key = key;
         this->value = value;
     }
+
     Pair(const Pair &pair) {
         this->key = pair.key;
         this->value = pair.value;
     }
+
     Pair &operator=(const Pair &pair) {
         this->key = pair.key;
         this->value = pair.value;
     }
 };
 
-template < class K, class V >
+template <class K, class V>
 class IMap {
 public:
     virtual ~IMap() {};
@@ -133,17 +141,17 @@ public:
     /*
      * keys(): return a set of keys stored in the map
      */
-    virtual DLinkedList< K > keys() = 0;
+    virtual DLinkedList<K> keys() = 0;
 
     /*
      * values(): return a set of values stored in the map
      */
-    virtual DLinkedList< V > values() = 0;
+    virtual DLinkedList<V> values() = 0;
 
     /*
      * clashes(): return a list containing the collision count for each address
      */
-    virtual DLinkedList< int > clashes() = 0;
+    virtual DLinkedList<int> clashes() = 0;
 };
 
 #endif /* IMAP_H */
