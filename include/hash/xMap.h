@@ -250,34 +250,10 @@ xMap<K, V>::xMap(const xMap<K, V> &map) {
 
 template <class K, class V>
 xMap<K, V> &xMap<K, V>::operator=(const xMap<K, V> &map) {
-    if(this == &map) {
-        return *this; // Xử lý tự gán
-    }
-
-    removeInternalData();
-
-    // Đảm bảo không giữ lại con trỏ đã xóa
-    this->table = nullptr;
-
-    // Sao chép biến thành viên
-    this->hashCode = map.hashCode;
-    this->loadFactor = map.loadFactor;
-    this->valueEqual = map.valueEqual;
-    this->deleteValues = map.deleteValues;
-    this->keyEqual = map.keyEqual;
-    this->deleteKeys = map.deleteKeys;
-
-    // Khởi tạo bảng mới và sao chép các mục
-    this->capacity = map.capacity;
-    this->table = new DLinkedList<Entry *>[this->capacity]; // Cấp phát bảng mới
-    this->count = map.count;
-
-    for(int i = 0; i < map.capacity; i++) {
-        // Sử dụng iterator
-        for(auto it = map.table[i].begin(); it != map.table[i].end(); ++it) {
-            Entry *newEntry = new Entry(**it); // Sao chép mục
-            this->table[i].add(newEntry);      // Giả sử phương thức add được triển khai đúng
-        }
+    if(this != &map) {
+        this->deleteKeys = nullptr;
+        this->deleteValues = nullptr;
+        copyMapFrom(map);
     }
 
     return *this; // Cho phép gán nối
@@ -422,7 +398,13 @@ int xMap<K, V>::size() {
 
 template <class K, class V>
 void xMap<K, V>::clear() {
-    removeInternalData();
+
+    for(int idx = 0; idx < this->capacity; idx++) {
+        DLinkedList<Entry *> &list = this->table[idx];
+        for(auto pEntry : list)
+            delete pEntry;
+        // list.clear();
+    }
 
     // Reinitialize with empty state
     this->capacity = 10;
@@ -610,7 +592,7 @@ template <class K, class V>
 void xMap<K, V>::copyMapFrom(const xMap<K, V> &map) {
     removeInternalData();
 
-    this->capacity = map.capacity;
+    this->capacity = 10;
     this->count = 0;
     this->table = new DLinkedList<Entry *>[capacity];
 

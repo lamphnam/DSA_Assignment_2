@@ -14,6 +14,7 @@
 #ifndef HEAP_H
 #define HEAP_H
 #include "heap/IHeap.h"
+#include <iostream>
 #include <memory.h>
 #include <sstream>
 
@@ -219,10 +220,10 @@ Heap<T> &Heap<T>::operator=(const Heap<T> &heap) {
 template <class T>
 Heap<T>::~Heap() {
     // YOUR CODE IS HERE
-    if(this->deleteUserData) {
-        this->deleteUserData(this);
-    }
-    delete[] this->elements;
+    // if (this->deleteUserData) {
+    //     this->deleteUserData(this);
+    // }
+    // delete[] this->elements;
 }
 
 template <class T>
@@ -315,10 +316,17 @@ void Heap<T>::remove(T item, void (*removeItemData)(T)) {
 
 template <class T>
 bool Heap<T>::contains(T item) {
-    // YOUR CODE IS HERE
     for(int i = 0; i < count; i++) {
-        if(item == elements[i]) {
-            return true;
+        if constexpr(std::is_pointer<T>::value) {
+            // Nếu T là con trỏ, sử dụng comparator
+            if(elements[i] != nullptr && comparator(item, elements[i]) == 0) {
+                return true;
+            }
+        } else {
+            // Nếu T không phải là con trỏ, so sánh trực tiếp
+            if(item == elements[i]) {
+                return true;
+            }
         }
     }
     return false;
@@ -332,19 +340,12 @@ int Heap<T>::size() {
 
 template <class T>
 void Heap<T>::heapify(T array[], int size) {
-
-    clear();
-
-    this->elements = new T[size];
-    this->capacity = size;
-    this->count = size;
-
-    // Sao chép các phần tử từ mảng array vào elements
-    for(int i = 0; i < size; ++i) {
-        this->elements[i] = array[i];
-    }
-    for(int i = (size / 2) - 1; i >= 0; --i) {
-        reheapDown(i);
+    if(size > 0) {
+        clear();
+        ensureCapacity(size);
+        for(int i = 0; i < size; i++) {
+            this->push(array[i]);
+        }
     }
 }
 
@@ -354,7 +355,7 @@ void Heap<T>::clear() {
     delete[] this->elements;
 
     this->capacity = 10;
-    this->count = 10;
+    this->count = 0;
     this->elements = new T[this->capacity];
 }
 
@@ -437,26 +438,17 @@ void Heap<T>::reheapDown(int position) {
     int rightChild = 2 * position + 2;
     int lastPosition = count - 1;
 
-    // Nếu không có con trái, dừng
     if(leftChild > lastPosition) return;
 
-    // Tìm vị trí nhỏ nhất (hoặc lớn nhất, tùy vào comparator)
-    int smallerChild = leftChild;
+    int preferredChild = leftChild;
 
-    // Nếu có con phải và con phải nhỏ hơn con trái
     if(rightChild <= lastPosition && aLTb(elements[rightChild], elements[leftChild])) {
-        smallerChild = rightChild;
+        preferredChild = rightChild;
     }
 
-    // So sánh với phần tử nhỏ nhất
-    if(aLTb(elements[smallerChild], elements[position])) {
-        // Swap nếu con nhỏ hơn parent
-        T temp = elements[position];
-        elements[position] = elements[smallerChild];
-        elements[smallerChild] = temp;
-
-        // Đệ quy xuống dưới
-        reheapDown(smallerChild);
+    if(aLTb(elements[preferredChild], elements[position])) {
+        std::swap(elements[position], elements[preferredChild]);
+        reheapDown(preferredChild);
     }
 }
 
@@ -490,5 +482,4 @@ void Heap<T>::copyFrom(const Heap<T> &heap) {
         this->elements[idx] = heap.elements[idx];
     }
 }
-
 #endif /* HEAP_H */
