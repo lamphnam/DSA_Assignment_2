@@ -3,7 +3,10 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include/ann",
+                "${workspaceFolder}/include/tensor"
             ],
             "defines": [
                 "_DEBUG",
@@ -11,9 +14,10 @@
                 "_UNICODE"
             ],
             "windowsSdkVersion": "10.0.22621.0",
-            "compilerPath": "cl.exe",
+            "compilerPath": "C:/mingw64/bin/g++.exe", // Change this path to your actual compiler path
             "cStandard": "c17",
-            "intelliSenseMode": "windows-msvc-x64"
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64" // Changed to GCC since most C++ projects use it
         }
     ],
     "version": 4

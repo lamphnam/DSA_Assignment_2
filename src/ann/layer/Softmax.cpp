@@ -26,11 +26,17 @@ Softmax::Softmax(const Softmax &orig) {}
 Softmax::~Softmax() {}
 
 xt::xarray<double> Softmax::forward(xt::xarray<double> X) {
-    // YOUR CODE IS HERE
+
+    xt::xarray<double> exp_X = xt::exp(X - xt::amax(X, {m_nAxis}));
+    xt::xarray<double> sum_exp_X = xt::sum(exp_X, {m_nAxis}, true);
+    m_aCached_Y = exp_X / sum_exp_X;
+    return m_aCached_Y;
 }
 
 xt::xarray<double> Softmax::backward(xt::xarray<double> DY) {
     // YOUR CODE IS HERE
+    xt::xarray<double> DX = m_aCached_Y * (DY - xt::sum(DY * m_aCached_Y, {m_nAxis}, true));
+    return DX;
 }
 
 string Softmax::get_desc() {

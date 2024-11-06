@@ -262,6 +262,12 @@ xMap<K, V> &xMap<K, V>::operator=(const xMap<K, V> &map) {
 template <class K, class V>
 xMap<K, V>::~xMap() {
     // this->clear();
+    for(int idx = 0; idx < this->capacity; idx++) {
+        DLinkedList<Entry *> &list = this->table[idx];
+        for(auto pEntry : list)
+            delete pEntry;
+        // list.clear();
+    }
 }
 
 //////////////////////////////////////////////////////////////////////

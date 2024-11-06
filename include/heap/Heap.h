@@ -223,7 +223,7 @@ Heap<T>::~Heap() {
     // if (this->deleteUserData) {
     //     this->deleteUserData(this);
     // }
-    // delete[] this->elements;
+    delete[] this->elements;
 }
 
 template <class T>
