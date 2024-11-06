@@ -131,26 +131,54 @@ FCLayer::FCLayer(const FCLayer &orig) {
 FCLayer::~FCLayer() {}
 
 xt::xarray<double> FCLayer::forward(xt::xarray<double> X) {
-    // YOUR CODE IS HERE
-    // If is_training
+    // std::cout << "Input X shape: ";
+    // for(const auto &dim : X.shape()) {
+    //     std::cout << dim << " ";
+    // }
+    // std::cout << std::endl;
+
+    // std::cout << "Weights shape: ";
+    // for(const auto &dim : m_aWeights.shape()) {
+    //     std::cout << dim << " ";
+    // }
+    // std::cout << std::endl;
+    // // Kiểm tra kích thước đầu vào
+    // if(X.shape()[1] != m_aWeights.shape()[1]) {
+    //     // Tự động điều chỉnh kích thước của m_aWeights
+    //     m_aWeights = xt::reshape_view(m_aWeights, {X.shape()[1], m_aWeights.shape()[1]});
+    // }
+
     m_aCached_X = X;
 
-    xt::xarray<double> Y = xt::linalg::dot(X, m_aWeights);
+    xt::xarray<double> Y = xt::linalg::dot(X, xt::transpose(m_aWeights));
     if(!m_bUse_Bias) {
         return Y;
+    }
+
+    // Tự động điều chỉnh kích thước của m_aBias
+    if(m_aBias.shape()[0] != Y.shape()[1]) {
+        m_aBias = xt::reshape_view(m_aBias, {Y.shape()[1]});
     }
 
     return Y + m_aBias;
 }
 
 xt::xarray<double> FCLayer::backward(xt::xarray<double> DY) {
-    // YOUR CODE IS HERE
+    // Kiểm tra kích thước gradient
+    if(DY.shape()[0] != m_aWeights.shape()[0]) {
+        // Tự động điều chỉnh kích thước của m_aWeights
+        m_aWeights = xt::reshape_view(m_aWeights, {DY.shape()[0], m_aWeights.shape()[1]});
+    }
+
     m_unSample_Counter = 0;
 
     m_aGrad_W = xt::linalg::outer(DY, m_aCached_X);
 
     if(m_bUse_Bias) {
-        m_aGrad_b = DY;
+        // Tự động điều chỉnh kích thước của m_aGrad_b
+        if(m_aGrad_b.shape()[0] != DY.shape()[1]) {
+            m_aGrad_b = xt::reshape_view(m_aGrad_b, {DY.shape()[1]});
+        }
     }
 
     xt::xarray<double> m_aGard_X = xt::linalg::dot(DY, xt::transpose(m_aWeights));

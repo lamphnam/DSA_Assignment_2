@@ -26,16 +26,52 @@ Softmax::Softmax(const Softmax &orig) {}
 Softmax::~Softmax() {}
 
 xt::xarray<double> Softmax::forward(xt::xarray<double> X) {
+    // Tạo một xarray để lưu kết quả softmax
+    xt::xarray<double> m_aCached_Y(X.shape());
 
-    xt::xarray<double> exp_X = xt::exp(X - xt::amax(X, {m_nAxis}));
-    xt::xarray<double> sum_exp_X = xt::sum(exp_X, {m_nAxis}, true);
-    m_aCached_Y = exp_X / sum_exp_X;
+    // Tính giá trị max trong mỗi hàng để tránh tràn số
+    auto max_values = xt::amax(X, 1); // Tìm giá trị max của mỗi dòng (axis 1)
+
+    // Lặp qua từng hàng trong ma trận X
+    for(std::size_t i = 0; i < X.shape()[0]; ++i) {
+        double sum_exp = 0.0;
+
+        // Tính tổng của e^(z_i - max_value) cho mỗi phần tử z_i trong dòng
+        for(std::size_t j = 0; j < X.shape()[1]; ++j) {
+            sum_exp += std::exp(X(i, j) - max_values(i));
+        }
+
+        // Lặp lại một lần nữa để tính giá trị softmax
+        for(std::size_t j = 0; j < X.shape()[1]; ++j) {
+            m_aCached_Y(i, j) = std::exp(X(i, j) - max_values(i)) / sum_exp;
+        }
+    }
+
+    // Lưu kết quả softmax vào m_aCached_Y
     return m_aCached_Y;
 }
 
 xt::xarray<double> Softmax::backward(xt::xarray<double> DY) {
-    // YOUR CODE IS HERE
-    xt::xarray<double> DX = m_aCached_Y * (DY - xt::sum(DY * m_aCached_Y, {m_nAxis}, true));
+    xt::xarray<double> m_aCached_Y_1D = xt::squeeze(m_aCached_Y);
+
+    // Tạo ma trận chéo DIAG(y)
+    xt::xarray<double> diag_y = xt::diag(m_aCached_Y_1D);
+
+    // Tính outer product y * y^T
+    xt::xarray<double> outer_product = xt::linalg::outer(m_aCached_Y_1D, m_aCached_Y_1D);
+
+    // Tính \(\operatorname{DIAG}(\mathbf{y}) - \mathbf{y} \otimes \mathbf{y}^T\)
+    xt::xarray<double> result = diag_y - outer_product;
+
+    // Kiểm tra sự tương thích giữa kích thước của result và DY
+    if(result.shape(1) != DY.shape(0)) {
+        throw std::runtime_error("Shape mismatch in Softmax backward: result's number of columns does not match DY's "
+                                 "number of rows. SOFTMAX BACKWARD");
+    }
+
+    // Tính gradient DX
+    xt::xarray<double> DX = xt::linalg::dot(result, DY);
+
     return DX;
 }
 

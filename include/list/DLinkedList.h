@@ -256,7 +256,9 @@ public:
 
         // (b) Operator ++ (prefix)
         BWDIterator &operator++() {
-            pNode = pNode->prev; // Move backward in the list
+            if(pNode) {
+                pNode = pNode->prev; // Move backward in the list
+            }
             return *this;
         }
 

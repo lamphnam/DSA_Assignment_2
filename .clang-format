@@ -8,7 +8,7 @@ ColumnLimit: 120
 # Spacing for operators and literals
 SpaceAfterCStyleCast: false
 SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: false  # Changed to false to remove space before if parentheses
+SpaceBeforeParens: false
 SpacesInAngles: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
@@ -31,9 +31,11 @@ ContinuationIndentWidth: 4
 SpaceAfterTemplateKeyword: true
 
 # Control statement formatting
-AllowShortIfStatementsOnASingleLine: AllIfsAndElse  # Changed to allow all if-else on single line
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AllowShortBlocksOnASingleLine: Empty
 BreakBeforeBraces: Attach
 MaxEmptyLinesToKeep: 1
 SeparateDefinitionBlocks: Always
-AllowShortCaseLabelsOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: false  # Changed to false
+IndentCaseLabels: true  # Added to indent case labels
+# AllowShortCaseLabelsOnASingleLine: false  # Added to prevent case labels on single line

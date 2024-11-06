@@ -99,7 +99,6 @@ public:
     }
 
     // Get Batch
-
     Batch<DType, LType> get_batch(int batch_index) {
         int start_index = batch_index * batch_size;
         int end_index = std::min((batch_index + 1) * batch_size, dataset_size);
@@ -151,6 +150,10 @@ public:
         }
 
         return Batch<DType, LType>(batch_data, batch_label);
+    }
+
+    int get_total_batch() {
+        return total_batches;
     }
 
     Iterator begin() {
