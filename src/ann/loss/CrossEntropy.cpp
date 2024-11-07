@@ -1,6 +1,8 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/cppFiles/class.cc to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt
+ * to change this license Click
+ * nbfs://nbhost/SystemFileSystem/Templates/cppFiles/class.cc to edit this
+ * template
  */
 
 /*
@@ -11,71 +13,78 @@
  */
 
 #include "loss/CrossEntropy.h"
+
 #include "ann/functions.h"
 
 CrossEntropy::CrossEntropy(LossReduction reduction) : ILossLayer(reduction) {}
 
-CrossEntropy::CrossEntropy(const CrossEntropy &orig) : ILossLayer(orig) {}
+CrossEntropy::CrossEntropy(const CrossEntropy& orig) : ILossLayer(orig) {}
 
 CrossEntropy::~CrossEntropy() {}
 
 double CrossEntropy::forward(xt::xarray<double> X, xt::xarray<double> t) {
-    // YOUR CODE IS HERE
-    // Dung cho backward:3
-    m_aCached_Ypred = X;
-    m_aYtarget = t;
-    //
-    auto N = X.shape(0);
-    double loss = 0.0;
-    double Nnorm;
-    // So sanh reduction tim N
-    switch(m_eReduction) {
-        case LossReduction::REDUCE_MEAN:
-            Nnorm = N;
-            break;
-        case LossReduction::REDUCE_SUM:
-        case LossReduction::REDUCE_NONE:
-            Nnorm = 1.0;
-            break;
-    }
+        m_aCached_Ypred = X; 
+    
+        if (t.dimension() == 1) {
+            xt::xarray<double> t_reshaped = xt::zeros<double>(xt::svector<size_t>{static_cast<size_t>(t.shape()[0]), 1});
 
-    if(t.dimension() == 2) {
-        auto log_X = xt::log(X);
-
-        auto elementwise_product = t * log_X;
-
-        double sum = xt::sum(elementwise_product)();
-
-        loss = -sum / N;
-    } else if(t.dimension() == 1) {
-        xt::xarray<double> log_probs = xt::log(X);
-
-        double sum_result = 0.0;
-        for(size_t i = 0; i < N; i++) {
-            sum_result += log_probs(i, t(i));
+            for(size_t i = 0; i < t.shape()[0]; ++i) {
+                t_reshaped(i, 0) = t(i);
+            }
+            m_aYtarget = t_reshaped;
+        } else {
+            m_aYtarget = t;
         }
-        loss = -sum_result / N;
+        const double EPSILON = 1e-7;
+        if (m_aYtarget.shape(1) == 1) {
+            size_t batch_size = m_aYtarget.shape(0);
+            size_t num_classes = X.shape(1);
+            xt::xarray<double> temp_target = xt::zeros<double>({batch_size, num_classes});
+            for (size_t i = 0; i < batch_size; ++i) {
+                int class_index = static_cast<int>(m_aYtarget(i, 0));
+                if (class_index >= 0 && class_index < static_cast<int>(num_classes)) {
+                    temp_target(i, class_index) = 1.0;
+                }
+            }
+            m_aYtarget = temp_target;
+        }
+
+        xt::xarray<double> safe_x = xt::clip(X, EPSILON, 1.0);
+        xt::xarray<double> log_probs = xt::log(safe_x);
+        
+        xt::xarray<double> losses = xt::sum(-m_aYtarget * log_probs, {1});
+        double total_loss = xt::sum(losses)();
+        size_t N_norm = X.shape(0);
+ 
+        double final_loss;
+        switch (m_eReduction) {
+            case REDUCE_MEAN:
+                final_loss = total_loss / N_norm;
+                break;
+            case REDUCE_SUM:
+                final_loss = total_loss;
+                break;
+            default:
+                final_loss = total_loss / N_norm;
+        }
+        return final_loss;
     }
-    return loss;
-}
 
 xt::xarray<double> CrossEntropy::backward() {
-    const double EPSILON = 1e-7;
-    double Nnorm;
+        const double EPSILON = 1e-7;
+        size_t N_norm = m_aCached_Ypred.shape(0);
 
-    // Kiểm tra reduction mode bằng enum
-    switch(m_eReduction) {
-        case LossReduction::REDUCE_MEAN:
-            Nnorm = m_aCached_Ypred.shape(0);
-            break;
-        case LossReduction::REDUCE_SUM:
-        case LossReduction::REDUCE_NONE:
-            Nnorm = 1.0;
-            break;
+        xt::xarray<double> denominator = xt::clip(m_aCached_Ypred, EPSILON, 1.0);
+        xt::xarray<double> grad = -m_aYtarget / denominator;
+
+        switch (m_eReduction) {
+            case REDUCE_MEAN:
+                grad = grad / static_cast<double>(N_norm);
+                break;
+            case REDUCE_SUM:
+                break;
+            default:
+                grad = grad / static_cast<double>(N_norm);
+        }
+        return grad;
     }
-
-    // Áp dụng công thức với Nnorm tương ứng
-    auto dY = (-m_aYtarget / (m_aCached_Ypred + EPSILON)) / Nnorm;
-
-    return dY;
-}
